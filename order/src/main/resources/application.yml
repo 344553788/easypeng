@@ -1,0 +1,44 @@
+server:
+  port: 8763
+eureka:
+  # 自定义实例编号
+  instance:
+    instance-id: ${spring.application.name}
+    # 配置使用主机名注册服务
+  #    hostname: localhost
+  client:
+    healthcheck:
+      enabled: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+spring:
+  zipkin:
+  #Zipkin Server 的 ip:port，这里换成自己的 Zipkin Server 的 IP 即可
+  base-url: http://localhost:9411/
+  #这里把抽样百分比设置为1，即信息全部采集
+  sleuth:
+    sampler:
+      probability: 1.0
+---
+spring:
+  profiles: docker
+  zipkin:
+  #Zipkin Server 的 ip:port，这里换成自己的 Zipkin Server 的 IP 即可
+  base-url: http://localhost:9411/
+  #这里把抽样百分比设置为1，即信息全部采集
+  sleuth:
+    sampler:
+      probability: 1.0
+server:
+  port: 8763
+eureka:
+  # 自定义实例编号
+  instance:
+    instance-id: ${spring.application.name}
+    # 配置使用主机名注册服务
+#    hostname: localhost
+  client:
+    healthcheck:
+      enabled: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

@@ -1,0 +1,29 @@
+server:
+  port: 9411
+eureka:
+  # 自定义实例编号
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+    # 配置使用主机名注册服务
+    #  hostname: localhost
+  client:
+    healthcheck:
+      enabled: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+---
+spring:
+  profiles: docker
+server:
+  port: 9411
+eureka:
+  # 自定义实例编号
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+    # 配置使用主机名注册服务
+  #    hostname: localhost
+  client:
+    healthcheck:
+      enabled: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
