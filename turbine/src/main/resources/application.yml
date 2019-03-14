@@ -1,0 +1,47 @@
+server:
+  port: 8886
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+    serviceUrl:
+      defaultZone: http://localhost:8885/eureka/
+  instance:
+    instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+    prefer-ip-address: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+turbine:
+  aggregator:
+    cluster-config: default     #需要监控的服务集群名
+  app-config: zuul,order,payment #需要监控的服务名
+  cluster-name-expression: new String('default')
+---
+spring:
+  profiles: docker
+server:
+  port: ${{SERVER_PORT}:8886}
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+    prefer-ip-address: true
+  client:
+    healthcheck:
+      enabled: true
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: ${{EUREKA_SERVER_LIST}:http://eureka:8885/eureka/}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+turbine:
+  aggregator:
+    cluster-config: default     #需要监控的服务集群名
+  app-config: order #需要监控的服务名
+  cluster-name-expression: new String('default')

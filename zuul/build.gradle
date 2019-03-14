@@ -1,0 +1,16 @@
+configurations {
+    compile.exclude module: 'spring-boot-starter-data-jpa'
+    all*.exclude group:'com.vladmihalcea', module: 'hibernate-types-52'
+
+}
+dependencies {
+    compile project (':common')
+    compile('org.springframework.cloud:spring-cloud-starter-netflix-zuul')
+    implementation 'org.springframework.cloud:spring-cloud-starter-zipkin'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+    // 添加　/actuator/hystrix.stream  config management.endpoints.web.exposure.include: "*"
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+}

@@ -24,8 +24,7 @@ subprojects {
     apply plugin: 'io.spring.dependency-management'
 
     group = 'com.tools'
-    version = '0.0.1-SNAPSHOT'
-
+    sourceCompatibility = '1.8'
     repositories {
         maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
         jcenter()
@@ -38,7 +37,6 @@ subprojects {
     }
 
     dependencies {
-
         annotationProcessor 'org.projectlombok:lombok:1.18.2'
         compileOnly 'org.projectlombok:lombok:1.18.2'
         testAnnotationProcessor 'org.projectlombok:lombok:1.18.2'

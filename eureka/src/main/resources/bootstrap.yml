@@ -1,0 +1,5 @@
+logging:
+  file: eureka.log
+spring:
+  application:
+    name: eureka

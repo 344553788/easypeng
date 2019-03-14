@@ -1,0 +1,6 @@
+jar.enabled=true
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compile 'com.vladmihalcea:hibernate-types-52:2.3.3'
+    compile 'org.modelmapper:modelmapper:0.7.4'
+}

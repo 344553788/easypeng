@@ -1,45 +1,58 @@
-server:
-  port: 8762
-eureka:
-  # 自定义实例编号
-  instance:
-    # can't has server.port ,because   @FeignClient(value = "payment")
-    instance-id: ${spring.application.name}
-    # 配置使用主机名注册服务
-  #    hostname: localhost
-  client:
-    healthcheck:
-      enabled: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
 spring:
   zipkin:
   #Zipkin Server 的 ip:port，这里换成自己的 Zipkin Server 的 IP 即可
-  base-url: http://localhost:9411/
+    base-url: http://localhost:9411/
   #这里把抽样百分比设置为1，即信息全部采集
   sleuth:
     sampler:
       probability: 1.0
+server:
+  port: 8883
+eureka:
+  # 自定义实例编号
+  instance:
+    instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+    prefer-ip-address: true
+  client:
+    healthcheck:
+      enabled: true
+    service-url:
+      defaultZone: http://localhost:8885/eureka/
+feign:
+  hystrix:
+    enabled: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 ---
 spring:
   profiles: docker
   zipkin:
   #Zipkin Server 的 ip:port，这里换成自己的 Zipkin Server 的 IP 即可
-  base-url: http://localhost:9411/
+    base-url: http://zipkin:9411/
   #这里把抽样百分比设置为1，即信息全部采集
   sleuth:
     sampler:
       probability: 1.0
 server:
-  port: 8762
+  port: 8883
+feign:
+  hystrix:
+    enabled: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 eureka:
   # 自定义实例编号
   instance:
-    instance-id: ${spring.application.name}
-    # 配置使用主机名注册服务
-  #    hostname: localhost
+    instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+    prefer-ip-address: true
   client:
     healthcheck:
       enabled: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${{EUREKA_SERVER_LIST}:http://eureka:8885/eureka/}

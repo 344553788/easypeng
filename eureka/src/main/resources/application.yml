@@ -1,0 +1,32 @@
+server:
+  port: 8885
+eureka:
+  instance:
+    prefer-ip-address: false
+    hostname: localhost
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  # 注册中心的自我保护，当注册应用下线时立即下线，开发环境使用，生产环境不使用
+  server:
+    enable-self-preservation: true
+---
+spring:
+  profiles: docker
+server:
+  port: 8885
+eureka:
+  instance:
+    prefer-ip-address: false
+    lease-expiration-duration-in-seconds: 30
+    lease-renewal-interval-in-seconds: 30
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://eureka:8761/eureka/
+  # 注册中心的自我保护，当注册应用下线时立即下线，开发环境使用，生产环境不使用
+  server:
+    enable-self-preservation: false

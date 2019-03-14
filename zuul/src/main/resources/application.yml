@@ -1,0 +1,73 @@
+server:
+  port: 8881
+eureka:
+  # 自定义实例编号
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+  client:
+    service-url:
+      defaultZone: http://localhost:8885/eureka/
+zuul:
+  routes:
+    order:
+      path: /order/**
+    payment:
+      path: /payment/**
+spring:
+  zipkin:
+    base-url: http://localhost:9411/
+  sleuth:
+    sampler:
+      probability: 1.0
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+ribbon:
+  ReadTImeout: 60000
+  ConnectTimeout: 3000
+---
+server:
+  port: 8881
+spring:
+  profiles: docker
+  zipkin:
+  #Zipkin Server 的 ip:port，这里换成自己的 Zipkin Server 的 IP 即可
+    base-url: ${{ZIPKIN_SERVER_LIST}:http://zipkin:9411/}
+  #这里把抽样百分比设置为1，即信息全部采集
+  sleuth:
+    sampler:
+      probability: 1.0
+eureka:
+  # 自定义实例编号
+  instance:
+    # 配置使用主机名注册服务
+    instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: ${{EUREKA_SERVER_LIST}:http://eureka:8885/eureka/}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+ribbon:
+  ReadTImeout: 60000
+  ConnectTimeout: 3000

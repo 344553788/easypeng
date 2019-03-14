@@ -1,0 +1,37 @@
+server:
+  port: 9411
+eureka:
+  # 自定义实例编号
+  instance:
+    instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+    prefer-ip-address: true
+  client:
+    healthcheck:
+      enabled: true
+    service-url:
+      defaultZone: http://localhost:8885/eureka/
+management:
+  metrics:
+    web:
+      server:
+        auto-time-requests: false
+---
+spring:
+  profiles: docker
+server:
+  port: 9411
+eureka:
+  # 自定义实例编号
+  instance:
+    instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+    prefer-ip-address: true
+  client:
+    healthcheck:
+      enabled: true
+    service-url:
+      defaultZone: ${{EUREKA_SERVER_LIST}:http://eureka-server:8885/eureka/}
+management:
+  metrics:
+    web:
+      server:
+        auto-time-requests: false

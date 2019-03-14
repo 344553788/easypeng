@@ -1,3 +1,5 @@
+logging:
+  file: payment.log
 spring:
-    application:
-      name: payment
+  application:
+    name: payment
