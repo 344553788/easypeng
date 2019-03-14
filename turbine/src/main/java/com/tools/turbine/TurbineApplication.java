@@ -14,10 +14,10 @@ import org.springframework.cloud.netflix.turbine.EnableTurbine;
  */
 
 @SpringBootApplication
-@EnableDiscoveryClient
 @EnableHystrixDashboard
 @EnableTurbine
 /**
+ * // @EnableTurbine注解包含了@EnableDiscoveryClient注解
  * hystrix仪表盘和turbine集成
  */
 public class TurbineApplication {

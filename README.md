@@ -14,18 +14,18 @@ distributed-transaction：mq最终一致性案例说明
 dockerization：用于容器化案例说明
 项目结构
 目录 	名称 	访问地址
-eureka 	注册中心 	http://127.0.0.1:8761
-gateway 	网关+路由 	http://127.0.0.1:8769/order/buy
-http://127.0.0.1:8769/pay/pay
-order 	订单服务 	http://127.0.0.1:8763/buy
-pay 	支付服务 	http://127.0.0.1:8762/pay
+eureka 	注册中心 	http://127.0.0.1:8885
+zuul 	网关+路由 	http://127.0.0.1:8881/order/buy http://127.0.0.1:8881/payment/pay
+zipkin 链路追踪　　http://127.0.0.1:9411/zipkin/
+turbine 断路器聚合监控  http://127.0.0.1:8886/hystrix
+order 	订单服务 	http://127.0.0.1:8884/buy
+payment	支付服务 	http://127.0.0.1:8883/pay
 启动顺序
 
-注册中心 -> 网关 -> 订单 -> 支付
+注册中心 -> 网关 -> 订单 -> 支付 ->链路追踪和断路器聚合监控
 服务顺序
 
-通过网关访问：http://127.0.0.1:8769/order/buy
+通过网关访问：http://127.0.0.1:8769/8881/order/buy
 用户购买行为 -> 通过网关(gateway) -> 订单(order)服务 -> 支付(pay)服务
 具体完整项目说明讲解
 
-https://www.cnblogs.com/linkstar/p/9610268.html

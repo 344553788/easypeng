@@ -1,22 +1,116 @@
-version: "2"
+version: "3"
 services:
-  zipkin-server:
-    image: registry.cn-hangzhou.aliyuncs.com/jingshanlb/zipkin-demo-server
-    labels:
-      aliyun.routing.port_9411: http://zipkin
-    restart: always
-
-  frontend:
-    image: registry.cn-hangzhou.aliyuncs.com/jingshanlb/zipkin-demo-frontend
-    labels:
-      aliyun.routing.port_8080: http://frontend
-    links:
-      - zipkin-server
-      - backend
-    restart: always
-
-  backend:
-    image: registry.cn-hangzhou.aliyuncs.com/jingshanlb/zipkin-demo-backend
-    links:
-      - zipkin-server
-    restart: always
+  redis:
+    image: redis:3.2-alpine
+    privileged: true
+    ports:
+      - 6379:6379
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      main:
+        aliases:
+          - redis
+  postgresqldb:
+    container_name: postgresqldb
+    image: healthcheck/postgres:alpine
+    privileged: true
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: easypeng1l0o
+      POSTGRES_DB: postgres
+    volumes:
+      - /usr/local/var/postgres:/var/lib/postgresql/data/
+    networks:
+      main:
+        aliases:
+          - postgresqldb
+  eureka:
+    container_name: eureka
+    image: easypeng/eureka
+    ports:
+      - 8885:8885
+    networks:
+      main:
+        aliases:
+          - eureka
+  zipkin:
+    container_name: zipkin
+    image: easypeng/zipkin
+    ports:
+      - 9411:9411
+    depends_on:
+      - eureka
+    networks:
+      main:
+        aliases:
+          - zipkin
+  turbine:
+    container_name: turbine
+    image: easypeng/turbine
+    ports:
+      - 8886:8886
+    depends_on:
+      - eureka
+      - zipkin
+    environment:
+      ZIPKIN_SERVER_LIST: http://zipkin:9411/
+      EUREKA_SERVER_LIST: http://eureka:8885/eureka/
+    networks:
+      main:
+        aliases:
+          - turbine
+  zuul:
+    container_name: zuul
+    image: easypeng/zuul
+    ports:
+      - 8881:8881
+      - 18881:18881
+    depends_on:
+      - eureka
+      - zipkin
+    environment:
+      ZIPKIN_SERVER_LIST: http://zipkin:9411/
+      EUREKA_SERVER_LIST: http://eureka:8885/eureka/
+    networks:
+      main:
+        aliases:
+          - zuul
+  order:
+    container_name: order
+    image: easypeng/order
+    ports:
+      - 8884:8884
+      - 18884:18884
+    depends_on:
+      - eureka
+      - zipkin
+      - postgresqldb
+    environment:
+      ZIPKIN_SERVER_LIST: http://zipkin:9411/
+      EUREKA_SERVER_LIST: http://eureka:8885/eureka/
+    networks:
+      main:
+        aliases:
+          - order
+  payment:
+    image: easypeng/payment
+    container_name: payment
+    ports:
+      - 8883:8883
+      - 18883:18883
+    depends_on:
+      - eureka
+      - zipkin
+      - postgresqldb
+    environment:
+      ZIPKIN_SERVER_LIST: http://zipkin:9411/
+      EUREKA_SERVER_LIST: http://eureka:8885/eureka/
+    networks:
+      main:
+        aliases:
+          - payment
+networks:
+  main:
